@@ -82,6 +82,12 @@ class Chef
         :boolean => true,
         :default => false
 
+      option :no_pty,
+        :short => "-T",
+        :description => "Prevent a psuedo-tty from being allocated.",
+        :boolean => true,
+        :default => false
+
       def session
         ssh_error_handler = Proc.new do |server|
           if config[:manual]
@@ -158,7 +164,7 @@ class Chef
         subsession ||= session
         command = fixup_sudo(command)
         subsession.open_channel do |ch|
-          ch.request_pty
+          ch.request_pty unless config[:no_pty]
           ch.exec command do |ch, success|
             raise ArgumentError, "Cannot execute #{command}" unless success
             ch.on_data do |ichannel, data|
