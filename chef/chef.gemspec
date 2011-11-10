@@ -21,11 +21,13 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rest-client", ">= 1.0.4", "< 1.7.0"
   s.add_dependency "bunny", ">= 0.6.0"
-  s.add_dependency "json", ">= 1.4.4", "<= 1.5.2"
+  s.add_dependency "json", ">= 1.4.4", "<= 1.6.1"
   s.add_dependency "treetop", "~> 1.4.9"
   s.add_dependency "net-ssh", "~> 2.1.3"
   s.add_dependency "net-ssh-multi", "~> 1.1.0"
   %w{erubis moneta highline uuidtools}.each { |gem| s.add_dependency gem }
+
+  %w(dep_selector rspec-core rspec-expectations rspec-mocks).each { |gem| s.add_development_dependency gem }
 
   s.bindir       = "bin"
   s.executables  = %w( chef-client chef-solo knife shef )
