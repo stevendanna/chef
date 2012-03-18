@@ -44,7 +44,7 @@ class Chef
         end
 
         if clients_to_delete.empty?
-          ui.info "No clients match the expression /#{name_args[0]}/"
+          ui.fatal("No clients match the expression /#{name_args[0]}/")
           exit 0
         end
 
@@ -62,4 +62,3 @@ class Chef
     end
   end
 end
-

@@ -217,8 +217,8 @@ class Chef
       if category_commands = guess_category(args)
         list_commands(category_commands)
       elsif missing_plugin = ( OFFICIAL_PLUGINS.find {|plugin| plugin == args[0]} )
-        ui.info("The #{missing_plugin} commands were moved to plugins in Chef 0.10")
-        ui.info("You can install the plugin with `(sudo) gem install knife-#{missing_plugin}")
+        ui.err("The #{missing_plugin} commands were moved to plugins in Chef 0.10")
+        ui.err("You can install the plugin with `(sudo) gem install knife-#{missing_plugin}")
       else
         list_commands
       end
@@ -338,7 +338,7 @@ class Chef
       Chef::Config.from_file(file)
     rescue SyntaxError => e
       ui.error "You have invalid ruby syntax in your config file #{file}"
-      ui.info(ui.color(e.message, :red))
+      ui.error(ui.color(e.message, :red))
       if file_line = e.message[/#{Regexp.escape(file)}:[\d]+/]
         line = file_line[/:([\d]+)$/, 1].to_i
         highlight_config_error(file, line)
@@ -346,9 +346,9 @@ class Chef
       exit 1
     rescue Exception => e
       ui.error "You have an error in your config file #{file}"
-      ui.info "#{e.class.name}: #{e.message}"
+      ui.error "#{e.class.name}: #{e.message}"
       filtered_trace = e.backtrace.grep(/#{Regexp.escape(file)}/)
-      filtered_trace.each {|line| ui.msg("  " + ui.color(line, :red))}
+      filtered_trace.each {|line| ui.err("  " + ui.color(line, :red))}
       if !filtered_trace.empty?
         line_nr = filtered_trace.first[/#{Regexp.escape(file)}:([\d]+)/, 1]
         highlight_config_error(file, line_nr.to_i)
@@ -367,10 +367,10 @@ class Chef
         lines = config_file_lines[Range.new(line - 2, line)]
         lines[1] = ui.color(lines[1], :red)
       end
-      ui.msg ""
-      ui.msg ui.color("     # #{file}", :white)
-      lines.each {|l| ui.msg(l)}
-      ui.msg ""
+      ui.err ""
+      ui.err ui.color("     # #{file}", :white)
+      lines.each {|l| ui.err(l)}
+      ui.err ""
     end
 
     def show_usage
@@ -397,15 +397,15 @@ class Chef
         humanize_http_exception(e)
       when Errno::ECONNREFUSED, Timeout::Error, Errno::ETIMEDOUT, SocketError
         ui.error "Network Error: #{e.message}"
-        ui.info "Check your knife configuration and network settings"
+        ui.err "Check your knife configuration and network settings"
       when NameError, NoMethodError
         ui.error "knife encountered an unexpected error"
-        ui.info  "This may be a bug in the '#{self.class.common_name}' knife command or plugin"
-        ui.info  "Please collect the output of this command with the `-VV` option before filing a bug report."
-        ui.info  "Exception: #{e.class.name}: #{e.message}"
+        ui.err  "This may be a bug in the '#{self.class.common_name}' knife command or plugin"
+        ui.err  "Please collect the output of this command with the `-VV` option before filing a bug report."
+        ui.err  "Exception: #{e.class.name}: #{e.message}"
       when Chef::Exceptions::PrivateKeyMissing
         ui.error "Your private key could not be loaded from #{api_key}"
-        ui.info  "Check your configuration file and ensure that your private key is readable"
+        ui.err  "Check your configuration file and ensure that your private key is readable"
       else
         ui.error "#{e.class.name}: #{e.message}"
       end
@@ -416,28 +416,28 @@ class Chef
       case response
       when Net::HTTPUnauthorized
         ui.error "Failed to authenticate to #{server_url} as #{username} with key #{api_key}"
-        ui.info "Response:  #{format_rest_error(response)}"
+        ui.err "Response:  #{format_rest_error(response)}"
       when Net::HTTPForbidden
         ui.error "You authenticated successfully to #{server_url} as #{username} but you are not authorized for this action"
-        ui.info "Response:  #{format_rest_error(response)}"
+        ui.err "Response:  #{format_rest_error(response)}"
       when Net::HTTPBadRequest
         ui.error "The data in your request was invalid"
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       when Net::HTTPNotFound
         ui.error "The object you are looking for could not be found"
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       when Net::HTTPInternalServerError
         ui.error "internal server error"
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       when Net::HTTPBadGateway
         ui.error "bad gateway"
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       when Net::HTTPServiceUnavailable
         ui.error "Service temporarily unavailable"
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       else
         ui.error response.message
-        ui.info "Response: #{format_rest_error(response)}"
+        ui.err "Response: #{format_rest_error(response)}"
       end
     end
 
@@ -511,4 +511,3 @@ class Chef
 
   end
 end
-

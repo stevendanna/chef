@@ -125,7 +125,7 @@ class Chef
         end
 
         unless template
-          ui.info("Can not find bootstrap definition for #{config[:distro]}")
+          ui.error("Can not find bootstrap definition for #{config[:distro]}")
           raise Errno::ENOENT
         end
 
@@ -154,7 +154,7 @@ class Chef
           knife_ssh.run
         rescue Net::SSH::AuthenticationFailed
           unless config[:ssh_password]
-            puts "Failed to authenticate #{config[:ssh_user]} - trying password auth"
+            ui.warn "Failed to authenticate #{config[:ssh_user]} - trying password auth"
             knife_ssh_with_password_auth.run
           end
         end
