@@ -79,7 +79,7 @@ class Chef
         :short => "-G GATEWAY",
         :long => "--ssh-gateway GATEWAY",
         :description => "The ssh gateway",
-        :proc => Proc.new { |key| Chef::Config[:knife][:ssh_gatewa] = key }
+        :proc => Proc.new { |key| Chef::Config[:knife][:ssh_gateway] = key }
 
       option :identity_file,
         :short => "-i IDENTITY_FILE",
@@ -369,7 +369,7 @@ class Chef
       end
 
       def configure_identity_file
-        config[:identity_file] = get_stripped_unfrozen_value(config[:identity_file] || 
+        config[:identity_file] = get_stripped_unfrozen_value(config[:identity_file] ||
                              Chef::Config[:knife][:ssh_identity_file])
       end
 
@@ -410,4 +410,3 @@ class Chef
     end
   end
 end
-
